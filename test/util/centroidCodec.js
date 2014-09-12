@@ -1,11 +1,13 @@
 
 var path = require('path'),
+    snappy = require('snappy'),
     codec = require('../../util/centroidCodec');
 
 var centroids = [
   { lat: 100.123456, lon: 95.223 },
   { lat: 1, lon: 1 },
-  { lat: -100.5, lon: -100.767 }
+  { lat: -100.5, lon: -100.767 },
+  { lat: -0.0651947, lon: 51.5329810 }
 ];
 
 module.exports.tests = {};
@@ -104,6 +106,11 @@ module.exports.tests.disk_space = function(test, common) {
 
       var base64 = codec.encodeBase64( centroid );
       t.ok(encoded.length <= base64.length, 'equal/smaller than base64');
+
+      /* leveldown has snappy enabled by default */
+      snappy.compress( encoded, function( err, compressed ){
+        t.ok(encoded.length <= compressed.length, 'snappy should be turned off');
+      });
       
     });
 
